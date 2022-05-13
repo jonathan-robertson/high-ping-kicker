@@ -22,3 +22,15 @@ This mod is largely based on the feature by the same name in [Server Tools](http
 Once every 30 seconds or so, the system will check ping for each player.
 
 The first ping check will happen at login. Subsequent ping checks will happen at 30-second intervals, give or take.
+
+### Kicked
+
+![kicked](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/kicked.jpg)
+
+### Banned
+
+![kicked due to ban](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/banned-kicked.jpg)
+
+### Ban Reminder
+
+![banned reminder](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/banned-reminder.jpg)
