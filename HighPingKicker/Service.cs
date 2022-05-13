@@ -10,9 +10,8 @@ namespace HighPingKicker {
         public static string Path { get; private set; } = System.IO.Path.Combine(GameIO.GetSaveGameDir(), "high-ping-kicker.json");
 
         private readonly Configuration Config;
-        private readonly Dictionary<string, int> PingCounters = new Dictionary<string, int>();
-        private readonly Dictionary<string, int> KickCounters = new Dictionary<string, int>();
 
+        public Dictionary<string, Violation> Violations { get; private set; } = new Dictionary<string, Violation>();
         public static Service Instance {
             get {
                 if (instance == null) {
@@ -37,31 +36,44 @@ namespace HighPingKicker {
             var ping = clientInfo.ping;
             var key = ClientToId(clientInfo);
             log.Debug("Ping Check: {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms"); // TODO: remove
-            if (ping <= Config.MaxPingAllowed) {
-                var reducedFailureBudget = Decrement(PingCounters, key);
-                log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {reducedFailureBudget}/{Config.FailureThresholdBeforeKick}.");
+
+            // good ping allows violations to recover
+            if (ping <= Config.MaxPingAllowed && Violations.TryGetValue(key, out var recoveringViolation)) {
+                recoveringViolation.PingFailures--;
+                if (recoveringViolation.PingFailures == 0) {
+                    Violations.Remove(key);
+                }
+                log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {recoveringViolation.PingFailures}/{Config.FailureThresholdBeforeKick}.");
                 return;
             }
 
-            var failureBudget = IncrementThenGet(PingCounters, key);
-            log.Info($"Ping Failure for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms > {Config.MaxPingAllowed}ms. Ping failure budget impacted: {failureBudget}/{Config.FailureThresholdBeforeKick}.");
-            if (failureBudget > Config.FailureThresholdBeforeKick) {
-                if (IncrementThenGet(KickCounters, key) > Config.AllowedKicksBeforeBan) {
+            // get or create violation object
+            if (!Violations.TryGetValue(key, out var violation)) {
+                violation = new Violation(key, clientInfo.playerName);
+                Violations.Add(key, violation);
+            }
+
+            // react to ping failure
+            violation.PingFailures++;
+            log.Info($"Ping Failure for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms > {Config.MaxPingAllowed}ms. Ping failure budget impacted: {violation.PingFailures}/{Config.FailureThresholdBeforeKick}.");
+            if (violation.PingFailures > Config.FailureThresholdBeforeKick) {
+                violation.TimesKicked++;
+                if (violation.TimesKicked > Config.AllowedKicksBeforeBan) {
                     var banExpiration = DateTime.Now.AddHours(Config.HoursBannedAfterKickWarnings);
                     KickAndBan(clientInfo, banExpiration);
-                    log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} banned. Ping: {ping}");
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically banned for {Config.HoursBannedAfterKickWarnings}hrs after being auto-kicked multiple times for excessive latency above {Config.MaxPingAllowed}ms.");
-                    PingCounters.Remove(key);
-                    KickCounters.Remove(key);
+                    violation.PingFailures = 0;
+                    violation.TimesKicked = 0;
+                    log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} banned. Ping: {ping}");
 
                     // Don't ban family accounts... for now
                     // BanFamilyAccount(clientInfo, banExpiration, reason);
                 } else {
                     var reason = $"Your connection to us exceeded the latency limit of {Config.MaxPingAllowed}ms multiple times, so you were automatically kicked from the server. Consider checking your router/computer/network to ensure your connection to us is functioning properly before attempting to reconnect. You can reconnect when ready, but please be aware that being kicked multiple times for this issue may result in a ban.";
                     Kick(clientInfo, reason);
-                    log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} kicked. Ping: {ping}");
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically kicked exceeded the latency limit of {Config.MaxPingAllowed}ms multiple times.");
-                    PingCounters.Remove(key);
+                    violation.PingFailures = 0;
+                    log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} kicked. Ping: {ping}");
                 }
             }
         }
@@ -88,36 +100,8 @@ namespace HighPingKicker {
                 .Select(p => p.entityId).ToList());
         }
 
-        private int IncrementThenGet(Dictionary<string, int> counters, string key) {
-            if (counters.ContainsKey(key)) {
-                counters[key]++;
-            } else {
-                counters.Add(key, 1);
-            }
-            return counters[key];
-        }
-
-        private int Decrement(Dictionary<string, int> counters, string key) {
-            if (counters.ContainsKey(key)) {
-                counters[key]--;
-                if (counters[key] == 0) {
-                    counters.Remove(key);
-                    return 0;
-                }
-                return counters[key];
-            }
-            return 0;
-        }
-
         private string ClientToId(ClientInfo clientInfo) {
             return clientInfo.PlatformId.ReadablePlatformUserIdentifier;
-        }
-
-        private void ResetViolationsCounter(ClientInfo clientInfo) {
-            var key = ClientToId(clientInfo);
-            if (PingCounters.ContainsKey(key)) {
-                PingCounters.Remove(key);
-            }
         }
 
         public static bool Load() {

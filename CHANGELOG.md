@@ -8,11 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 
 - add command to show current ping and kick counters
-- add logs for any time a counter increases
 - add option for system to whisper to users about latency
 
 ## [1.0.0] - 2022-05-13
 
+- add logs entries any time a counter increases
 - flush ping counter when players is kicked
 - flush ping & kick counter when player is banned
 - update existing log entries with standard prefix

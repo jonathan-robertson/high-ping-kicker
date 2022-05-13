@@ -18,3 +18,5 @@ This mod is largely based on the feature by the same name in [Server Tools](http
 *Ping limit will come preconfigured with a suggested value of 200ms, but this might naturally exclude some regions that you don't want to exclude... consider registering your server at <https://7daystodie-servers.com/> and view the Ping tab to get a rundown of ping tests from various parts of the world.*
 
 1. TODO
+
+Once every 30 seconds or so, the system will check ping for each player
