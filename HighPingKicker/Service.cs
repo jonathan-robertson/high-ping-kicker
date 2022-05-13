@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace HighPingKicker {
     internal class Service {
+        private static readonly ModLog log = new ModLog(typeof(Service));
         public static string Path { get; private set; } = System.IO.Path.Combine(GameIO.GetSaveGameDir(), "high-ping-kicker.json");
 
         private readonly Configuration Config;
@@ -14,13 +15,13 @@ namespace HighPingKicker {
 
         public static Service Instance {
             get {
-                if (Instance == null) {
+                if (instance == null) {
                     Load();
                 }
-                return Instance;
+                return instance;
             }
-            private set { }
         }
+        private static Service instance;
 
         public static void CheckPing(ClientInfo clientInfo, PlayerDataFile _) {
             try {
@@ -35,7 +36,7 @@ namespace HighPingKicker {
         private void CheckPing(ClientInfo clientInfo) {
             var ping = clientInfo.ping;
             var key = ClientToId(clientInfo);
-            Log.Out($"[!] Ping Check: {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms"); // TODO: remove
+            log.Debug("Ping Check: {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms"); // TODO: remove
             if (ping <= Config.MaxPingAllowed) {
                 Decrement(PingCounters, key);
                 return;
@@ -46,14 +47,14 @@ namespace HighPingKicker {
                     var banExpiration = DateTime.Now.AddHours(Config.HoursBannedAfterKickWarnings);
                     var reason = $"kicked multiple times for excessive latency above {Config.MaxPingAllowed}ms but the problem continues to persist";
                     Ban(clientInfo, banExpiration, reason);
-                    Log.Warning($"{clientInfo.playerName}/{ClientToId(clientInfo)} was banned: {reason}");
+                    log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} was banned: {reason}");
 
                     // Don't ban family accounts... for now
                     // BanFamilyAccount(clientInfo, banExpiration, reason);
                 } else {
                     var reason = $"latency exceeded the limit of {Config.MaxPingAllowed}ms multiple times, but can reconnect after checking router/network";
                     Kick(clientInfo, reason);
-                    Log.Warning($"{clientInfo.playerName}/{ClientToId(clientInfo)} was kicked: {reason}");
+                    log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} was kicked: {reason}");
                 }
             }
         }
@@ -112,28 +113,26 @@ namespace HighPingKicker {
         public static bool Load() {
             try {
                 var config = JsonUtil.Deserialize<Configuration>(File.ReadAllText(Path));
-                Log.Out($"Successfully loaded config from {Path}.");
-                Instance = new Service(config);
+                log.Info($"Successfully loaded config from {Path}.");
+                instance = new Service(config);
                 return true;
             } catch (FileNotFoundException) {
-                Log.Warning($"File not found at {Path}; creating a new one with default configs.");
-                Instance = new Service(null);
+                log.Warn($"File not found at {Path}; creating a new one with default configs.");
+                instance = new Service(null);
                 return true;
             } catch (Exception e) {
-                Log.Error($"Could not load file at {Path}; use console command 'hpk reset' to reset this file to defaults if you're unable to access/edit it directly.");
-                Log.Exception(e);
+                log.Error($"Could not load file at {Path}; use console command 'hpk reset' to reset this file to defaults if you're unable to access/edit it directly.", e);
                 return false;
             }
         }
         public static void Reset(SdtdConsole console) {
             try {
                 File.Delete(Path);
-                Instance = new Service(null);
+                instance = new Service(null);
                 console.Output($"Successfully deleted file at {Path} and re-initialized the service with the default configuration.");
             } catch (Exception e) {
                 var message = $"Failed to delete file at {Path}; check logs for more info.";
-                Log.Error(message);
-                Log.Exception(e);
+                log.Error(message, e);
                 console.Output(message);
             }
         }
@@ -169,9 +168,9 @@ namespace HighPingKicker {
         public void Save() {
             try {
                 File.WriteAllText(Path, SerializedConfig());
-                Log.Out($"Successfully saved config to {Path}.");
+                log.Info($"Successfully saved config to {Path}.");
             } catch (Exception e) {
-                Log.Out($"Unable to save to {Path}.", e);
+                log.Error($"Unable to save to {Path}.", e);
                 throw e;
             }
         }
