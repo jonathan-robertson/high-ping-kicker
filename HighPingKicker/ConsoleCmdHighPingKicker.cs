@@ -14,25 +14,40 @@ namespace HighPingKicker {
         }
 
         public override string GetHelp() {
+            int i = 1;
+            int j = 1;
             return $@"Usage:
-  1. {commands[0]}
-  2. {commands[0]} set <Option> <Value>
-  3. {commands[0]} reset
+  {i++}. {commands[0]}
+  {i++}. {commands[0]} set <Option> <Value>
+  {i++}. {commands[0]} list
+  {i++}. {commands[0]} reset
 Description Overview
-1. View current configuration
-2. Update a key/value pair in the configuration
-3. Delete the configuration file and create a new one with default values";
+{j++}. View current configuration
+{j++}. Update a key/value pair in the configuration
+{j++}. Show list of players currently being tracked for high ping
+{j++}. Delete the configuration file and create a new one with default values";
         }
 
         public override void Execute(List<string> _params, CommandSenderInfo _senderInfo) {
             try {
                 switch (_params.Count) {
                     case 0:
-                        SdtdConsole.Instance.Output(Service.Instance.SerializedConfig());
-                        break;
+                        SdtdConsole.Instance.Output(Service.Instance.Config.ToString());
+                        return;
                     case 1:
                         if ("reset".EqualsCaseInsensitive(_params[0])) {
                             Service.Reset(SdtdConsole.Instance);
+                            return;
+                        }
+                        if ("list".EqualsCaseInsensitive(_params[0])) {
+                            if (Service.Instance.Violations.Count == 0) {
+                                SdtdConsole.Instance.Output("No players are currently being watched for excessive latency.");
+                                return;
+                            }
+                            foreach (var key in Service.Instance.Violations.Keys) {
+                                SdtdConsole.Instance.Output(Service.Instance.Violations[key].ToString());
+                            }
+                            return;
                         }
                         break;
                     case 3:
@@ -46,12 +61,14 @@ Description Overview
                             } catch (Exception e) {
                                 SdtdConsole.Instance.Output($"Failed to update file at {Service.Path}.\n{e.Message}\n{e.StackTrace}");
                             }
+                            return;
                         }
                         break;
                     default:
                         SdtdConsole.Instance.Output($"Invalid number of parameters. Try running 'help {commands[0]}' to get a list of options.");
-                        break;
+                        return;
                 }
+                SdtdConsole.Instance.Output($"Invalid option. Try running 'help {commands[0]}' to get a list of options.");
             } catch (Exception e) {
                 SdtdConsole.Instance.Output($"Failed to run command.\n{e.Message}\n{e.StackTrace}");
             }

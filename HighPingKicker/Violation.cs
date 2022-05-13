@@ -17,5 +17,9 @@ namespace HighPingKicker {
             PingFailures = 0;
             TimesKicked = 0;
         }
+
+        public override string ToString() {
+            return $"Name: {Name}, PingFailures: {PingFailures}, TimesKicked: {TimesKicked}, SteamId: {SteamId}";
+        }
     }
 }

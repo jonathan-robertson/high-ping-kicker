@@ -9,8 +9,7 @@ namespace HighPingKicker {
         private static readonly ModLog log = new ModLog(typeof(Service));
         public static string Path { get; private set; } = System.IO.Path.Combine(GameIO.GetSaveGameDir(), "high-ping-kicker.json");
 
-        private readonly Configuration Config;
-
+        public Configuration Config { get; private set; }
         public Dictionary<string, Violation> Violations { get; private set; } = new Dictionary<string, Violation>();
         public static Service Instance {
             get {
