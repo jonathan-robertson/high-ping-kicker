@@ -7,4 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2022-05-13
 
-- initial pre-release
+- include admin console commands
+- support live settings updates
+- include default values of the following:
+  - `MaxPingAllowed`: 200 (ms)
+  - `FailureThresholdBeforeKick`: 2 (instances)
+  - `AllowedKicksBeforeBan`: 2 (instances)
+  - `HoursBannedAfterKickWarnings`: 24 (hours)
