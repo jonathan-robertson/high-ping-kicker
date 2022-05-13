@@ -25,28 +25,35 @@ Description Overview
         }
 
         public override void Execute(List<string> _params, CommandSenderInfo _senderInfo) {
-            switch (_params.Count) {
-                case 0:
-                    SdtdConsole.Instance.Output(Service.Instance.SerializedConfig());
-                    break;
-                case 1:
-                    if ("reset".EqualsCaseInsensitive(_params[1])) {
-                        Service.Reset(SdtdConsole.Instance);
-                    }
-                    break;
-                case 3:
-                    if ("set".EqualsCaseInsensitive(_params[1]) && int.TryParse(_params[3], out var value)) {
-                        try {
-                            if (Service.Instance.Set(_params[2], value)) {
-                                SdtdConsole.Instance.Output($"Successfully updated {_params[2]} -> {value}\nUpdated config file at {Service.Path}.");
-                            } else {
-                                SdtdConsole.Instance.Output($"Invalid option provided: {_params[2]}\nUse command '{commands[0]}' to view as list of options you can change.");
-                            }
-                        } catch (Exception e) {
-                            SdtdConsole.Instance.Output($"Failed to update file at {Service.Path}.\n{e.Message}\n{e.StackTrace}");
+            try {
+                switch (_params.Count) {
+                    case 0:
+                        SdtdConsole.Instance.Output(Service.Instance.SerializedConfig());
+                        break;
+                    case 1:
+                        if ("reset".EqualsCaseInsensitive(_params[0])) {
+                            Service.Reset(SdtdConsole.Instance);
                         }
-                    }
-                    break;
+                        break;
+                    case 3:
+                        if ("set".EqualsCaseInsensitive(_params[0]) && int.TryParse(_params[2], out var value)) {
+                            try {
+                                if (Service.Instance.Set(_params[1], value)) {
+                                    SdtdConsole.Instance.Output($"Successfully updated {_params[1]} -> {value}\nUpdated config file at {Service.Path}.");
+                                } else {
+                                    SdtdConsole.Instance.Output($"Invalid option provided: {_params[1]}\nUse command '{commands[0]}' to view as list of options you can change.");
+                                }
+                            } catch (Exception e) {
+                                SdtdConsole.Instance.Output($"Failed to update file at {Service.Path}.\n{e.Message}\n{e.StackTrace}");
+                            }
+                        }
+                        break;
+                    default:
+                        SdtdConsole.Instance.Output($"Invalid number of parameters. Try running 'help {commands[0]}' to get a list of options.");
+                        break;
+                }
+            } catch (Exception e) {
+                SdtdConsole.Instance.Output($"Failed to run command.\n{e.Message}\n{e.StackTrace}");
             }
         }
     }
