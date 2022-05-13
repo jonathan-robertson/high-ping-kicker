@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [TODO]
 
 - add option for system to whisper to users about latency
-- redo text so it fits in message box
+- add exception for admins
+- add option for ping requirement on login separate from while playing to early-bump
 
 ## [1.0.0] - 2022-05-13
 

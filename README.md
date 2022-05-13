@@ -19,4 +19,6 @@ This mod is largely based on the feature by the same name in [Server Tools](http
 
 1. TODO
 
-Once every 30 seconds or so, the system will check ping for each player
+Once every 30 seconds or so, the system will check ping for each player.
+
+The first ping check will happen at login. Subsequent ping checks will happen at 30-second intervals, give or take.

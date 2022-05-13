@@ -63,12 +63,13 @@ namespace HighPingKicker {
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically banned for {Config.HoursBannedAfterKickWarnings}hrs after being auto-kicked multiple times for excessive latency above {Config.MaxPingAllowed}ms.");
                     violation.PingFailures = 0;
                     violation.TimesKicked = 0;
+                    Violations.Remove(key);
                     log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} banned. Ping: {ping}");
 
                     // Don't ban family accounts... for now
                     // BanFamilyAccount(clientInfo, banExpiration, reason);
                 } else {
-                    var reason = $"Your connection to us exceeded the latency limit of {Config.MaxPingAllowed}ms multiple times, so you were automatically kicked from the server. Consider checking your router/computer/network to ensure your connection to us is functioning properly before attempting to reconnect. You can reconnect when ready, but please be aware that being kicked multiple times for this issue may result in a ban.";
+                    var reason = $"Your connection to us exceeded our allowed latency limit, so you were automatically kicked. Try checking your router/computer/network to ensure your connection is stable before attempting to rejoin. Repeated kicking may result in a ban.";
                     Kick(clientInfo, reason);
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically kicked exceeded the latency limit of {Config.MaxPingAllowed}ms multiple times.");
                     violation.PingFailures = 0;
@@ -77,15 +78,15 @@ namespace HighPingKicker {
             }
         }
 
-        private void Kick(ClientInfo clientInfo, string reason, GameUtils.EKickReason kickReason = GameUtils.EKickReason.ModDecision) {
+        private void Kick(ClientInfo clientInfo, string reason) {
             log.Info($"Kicked {ClientToId(clientInfo)}({clientInfo.playerName})");
-            GameUtils.KickPlayerForClientInfo(clientInfo, new GameUtils.KickPlayerData(kickReason, 0, default, reason));
+            GameUtils.KickPlayerForClientInfo(clientInfo, new GameUtils.KickPlayerData(GameUtils.EKickReason.ManualKick, 0, default, reason));
         }
 
         private void KickAndBan(ClientInfo clientInfo, DateTime banExpiration) {
             log.Info($"Banned {ClientToId(clientInfo)}({clientInfo.playerName})");
-            Kick(clientInfo, "You were banned for excessive Network Latency and can try connecting again after the indicated time shown here. If you do not believe there is an ongoing problem with your network, you may simply be located too far away from this server. In that case, we would recommend trying a different server.", GameUtils.EKickReason.Banned);
-            GameManager.Instance.adminTools.AddBan(clientInfo.playerName, clientInfo.PlatformId, banExpiration, $"Banned for {Config.HoursBannedAfterKickWarnings}hrs after auto-kicked multiple times for latency above {Config.MaxPingAllowed}ms.", true);
+            GameManager.Instance.adminTools.AddBan(clientInfo.playerName, clientInfo.PlatformId, banExpiration, $"High network latency when connecting to our server triggered in a temporary ban for {Config.HoursBannedAfterKickWarnings}hrs. Try joining again once your connection improves or join a different server if needed.", true);
+            Kick(clientInfo, "You have been banned for 24 hrs due to high ping/latency. Once the ban expires, you are free to reconnect, but your expeirence might not improve if you're located far enough away from our server.");
         }
 
         private void BanFamilyAccount(ClientInfo clientInfo, DateTime banExpiration, string reason) {
