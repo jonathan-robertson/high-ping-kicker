@@ -6,7 +6,10 @@
         public int HoursBannedAfterKickWarnings { get; set; } = 24;
 
         public override string ToString() {
-            return $"MaxPingAllowed: {MaxPingAllowed}\nFailureThresholdBeforeKick: {FailureThresholdBeforeKick}\nAllowedKicksBeforeBan: {AllowedKicksBeforeBan}\nHoursBannedAfterKickWarnings: {HoursBannedAfterKickWarnings}";
+            return $@"- MaxPingAllowed: {MaxPingAllowed}
+- FailureThresholdBeforeKick: {FailureThresholdBeforeKick}
+- AllowedKicksBeforeBan: {AllowedKicksBeforeBan}
+- HoursBannedAfterKickWarnings: {HoursBannedAfterKickWarnings}";
         }
     }
 }

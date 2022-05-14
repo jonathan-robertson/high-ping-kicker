@@ -69,8 +69,7 @@ namespace HighPingKicker {
                     // Don't ban family accounts... for now
                     // BanFamilyAccount(clientInfo, banExpiration, reason);
                 } else {
-                    var reason = $"Your connection to us exceeded our allowed latency limit, so you were automatically kicked. Try checking your router/computer/network to ensure your connection is stable before attempting to rejoin. Repeated kicking may result in a ban.";
-                    Kick(clientInfo, reason);
+                    Kick(clientInfo, "Your connection to us exceeded our allowed latency limit, so you were automatically kicked. Try checking your router/computer/network to ensure your connection is stable before attempting to rejoin. Repeated kicking may result in a ban.");
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically kicked exceeded the latency limit of {Config.MaxPingAllowed}ms multiple times.");
                     violation.PingFailures = 0;
                     log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} kicked. Ping: {ping}");
