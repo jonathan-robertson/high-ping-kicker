@@ -89,6 +89,20 @@ Note: *ban timeout can be customized*
 
 ![banned reminder](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/banned-reminder.jpg)
 
+## Development
+
+This project has a github action configured to automatically package and create a downloadable release artifact for this mod. To prepare a release, perform the following steps:
+
+1. create a new branch
+   1. make your code changes with Visual Studio 2022 and build your RELEASE (not Debug) to generate a new binary (this binary will be packaged during the automated release process)
+   2. update the `ModInfo.xml` version number (this will become the release's version tag)
+   3. update `CHANGELOG.md` because it makes me happy
+2. create a PR
+   1. provide the subject/title (this will become the release's name)
+   2. enter the details (this will become the release summary)
+3. when your PR is updated and merged, a release will automatically be created with the details you provided above
+   1. check out the release entry and copy the link for `high-ping-kicker.zip` from there if you want to download it on your server
+
 ## Special Thanks
 
 This mod is largely based on the feature by the same name in [Server Tools](https://github.com/dmustanger/7dtd-ServerTools). I would highly encourage anyone interested in *this* mod to check out their server management mod as well. It comes with a full suite of AntiCheat services and a truly wild number of tools and capabilities.
