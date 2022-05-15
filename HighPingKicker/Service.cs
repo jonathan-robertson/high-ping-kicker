@@ -34,15 +34,17 @@ namespace HighPingKicker {
         private void CheckPing(ClientInfo clientInfo) {
             var ping = clientInfo.ping;
             var key = ClientToId(clientInfo);
-            log.Debug("Ping Check: {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms"); // TODO: remove
+            log.Debug($"Ping Check: {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms"); // TODO: remove
 
             // good ping allows violations to recover
-            if (ping <= Config.MaxPingAllowed && Violations.TryGetValue(key, out var recoveringViolation)) {
-                recoveringViolation.PingFailures--;
-                if (recoveringViolation.PingFailures == 0) {
-                    Violations.Remove(key);
+            if (ping <= Config.MaxPingAllowed) {
+                if (Violations.TryGetValue(key, out var recoveringViolation)) {
+                    recoveringViolation.PingFailures--;
+                    if (recoveringViolation.PingFailures == 0) {
+                        Violations.Remove(key);
+                    }
+                    log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {recoveringViolation.PingFailures}/{Config.FailureThresholdBeforeKick}.");
                 }
-                log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {recoveringViolation.PingFailures}/{Config.FailureThresholdBeforeKick}.");
                 return;
             }
 
