@@ -1,4 +1,4 @@
-﻿namespace HighPingKicker {
+﻿namespace LagShield {
     public class Configuration {
         public int MaxPingAllowed { get; set; } = 200;
         public int FailureThresholdBeforeKick { get; set; } = 2;

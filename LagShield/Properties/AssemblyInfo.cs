@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HighPingKicker")]
+[assembly: AssemblyTitle("LagShield")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HighPingKicker")]
+[assembly: AssemblyProduct("LagShield")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("84dc5c4f-693b-4cd5-8ef3-4255508c2af9")]
+[assembly: Guid("bf9a0785-d62c-4878-a483-aa2653c4db12")]
 
 // Version information for an assembly consists of the following four values:
 //
