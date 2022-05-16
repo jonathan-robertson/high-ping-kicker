@@ -34,7 +34,6 @@ namespace LagShield {
         private void CheckPing(ClientInfo clientInfo) {
             var ping = clientInfo.ping;
             var key = ClientToId(clientInfo);
-            log.Debug($"Ping Check: {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms"); // TODO: remove
 
             // good ping allows violations to recover
             if (ping <= Config.MaxPingAllowed) {
