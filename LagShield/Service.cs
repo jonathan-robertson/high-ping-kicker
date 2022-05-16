@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace HighPingKicker {
+namespace LagShield {
     internal class Service {
         private static readonly ModLog log = new ModLog(typeof(Service));
-        public static string Path { get; private set; } = System.IO.Path.Combine(GameIO.GetSaveGameDir(), "high-ping-kicker.json");
+        public static string Path { get; private set; } = System.IO.Path.Combine(GameIO.GetSaveGameDir(), "lag-shield.json");
 
         public Configuration Config { get; private set; }
         public Dictionary<string, Violation> Violations { get; private set; } = new Dictionary<string, Violation>();
@@ -21,7 +21,7 @@ namespace HighPingKicker {
         }
         private static Service instance;
 
-        public static void CheckPing(ClientInfo clientInfo, PlayerDataFile _) {
+        public static void CheckLag(ClientInfo clientInfo, PlayerDataFile _) {
             try {
                 if (Instance != null) {
                     Instance.CheckPing(clientInfo);
@@ -39,11 +39,11 @@ namespace HighPingKicker {
             // good ping allows violations to recover
             if (ping <= Config.MaxPingAllowed) {
                 if (Violations.TryGetValue(key, out var recoveringViolation)) {
-                    recoveringViolation.PingFailures--;
-                    if (recoveringViolation.PingFailures == 0) {
+                    recoveringViolation.LagFailures--;
+                    if (recoveringViolation.LagFailures == 0) {
                         Violations.Remove(key);
                     }
-                    log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {recoveringViolation.PingFailures}/{Config.FailureThresholdBeforeKick}.");
+                    log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {recoveringViolation.LagFailures}/{Config.FailureThresholdBeforeKick}.");
                 }
                 return;
             }
@@ -55,15 +55,15 @@ namespace HighPingKicker {
             }
 
             // react to ping failure
-            violation.PingFailures++;
-            log.Info($"Ping Failure for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms > {Config.MaxPingAllowed}ms. Ping failure budget impacted: {violation.PingFailures}/{Config.FailureThresholdBeforeKick}.");
-            if (violation.PingFailures > Config.FailureThresholdBeforeKick) {
+            violation.LagFailures++;
+            log.Info($"Ping Failure for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms > {Config.MaxPingAllowed}ms. Ping failure budget impacted: {violation.LagFailures}/{Config.FailureThresholdBeforeKick}.");
+            if (violation.LagFailures > Config.FailureThresholdBeforeKick) {
                 violation.TimesKicked++;
                 if (violation.TimesKicked > Config.AllowedKicksBeforeBan) {
                     var banExpiration = DateTime.Now.AddHours(Config.HoursBannedAfterKickWarnings);
                     KickAndBan(clientInfo, banExpiration);
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically banned for {Config.HoursBannedAfterKickWarnings}hrs after being auto-kicked multiple times for excessive latency above {Config.MaxPingAllowed}ms.");
-                    violation.PingFailures = 0;
+                    violation.LagFailures = 0;
                     violation.TimesKicked = 0;
                     Violations.Remove(key);
                     log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} banned. Ping: {ping}");
@@ -73,7 +73,7 @@ namespace HighPingKicker {
                 } else {
                     Kick(clientInfo, "Your connection to us exceeded our allowed latency limit, so you were automatically kicked. Try checking your router/computer/network to ensure your connection is stable before attempting to rejoin. Repeated kicking may result in a ban.");
                     BroadcastMessage(clientInfo, $"{clientInfo.playerName} was automatically kicked exceeded the latency limit of {Config.MaxPingAllowed}ms multiple times.");
-                    violation.PingFailures = 0;
+                    violation.LagFailures = 0;
                     log.Warn($"{clientInfo.playerName}/{ClientToId(clientInfo)} kicked. Ping: {ping}");
                 }
             }

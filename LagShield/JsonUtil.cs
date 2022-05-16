@@ -1,4 +1,4 @@
-﻿namespace HighPingKicker {
+﻿namespace LagShield {
     internal class JsonUtil {
         public static string Serialize<T>(T data) {
             return SimpleJson2.SimpleJson2.SerializeObject(data);

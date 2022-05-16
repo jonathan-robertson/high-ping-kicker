@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HighPingKicker {
-    internal class ConsoleCmdHighPingKicker : ConsoleCmdAbstract {
-        private static readonly string[] commands = { "highpingkicker", "hpk" };
+namespace LagShield {
+    internal class ConsoleCmdLagShield : ConsoleCmdAbstract {
+        private static readonly string[] commands = { "lagshield", "ls" };
 
         public override string[] GetCommands() {
             return commands;
         }
 
         public override string GetDescription() {
-            return "Manage Ping thresholds to auto-kick/ban players exceeding the set limit";
+            return "Manage lag thresholds to auto-kick/ban players exceeding the set limit";
         }
 
         public override string GetHelp() {

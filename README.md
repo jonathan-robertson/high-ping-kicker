@@ -1,12 +1,12 @@
-# High Ping Kicker
-
-[![Tested with A20.4 b42](https://img.shields.io/badge/A20.4%20b42-tested-blue.svg)](https://7daystodie.com/) [![Automated Release](https://github.com/fatal-expedition/nerf-parkour/actions/workflows/main.yml/badge.svg)](https://github.com/jonathan-robertson/gmo-farming/actions/workflows/main.yml)
+# Lag Shield [![Tested with A20.4 b42](https://img.shields.io/badge/A20.4%20b42-tested-blue.svg)](https://7daystodie.com/) [![Automated Release](https://github.com/fatal-expedition/nerf-parkour/actions/workflows/main.yml/badge.svg)](https://github.com/jonathan-robertson/gmo-farming/actions/workflows/main.yml)
 
 7 Days to Die Modlet: Automatically monitor and kick/ban players with excessively high ping
 
+![Lag Shield](https://github.com/jonathan-robertson/lag-shield/raw/media/lag-shield-social.jpg)
+
 ## Usage
 
-> Even a single player with high ping can cause trouble for all other players - making pvp virtually impossible. Automatically removing players with consistently high ping can help to reduce errors/issues on the game server and improve the experience for everyone else.
+> Even a single player with high lag/ping can cause trouble for all other players - making pvp virtually impossible. Automatically removing players with consistently high lag can help to reduce errors/issues on the game server and improve the experience for everyone else.
 
 ### Compatibility
 
@@ -21,16 +21,16 @@ Local | No | Installing this mod on the client is not necessary; please only ins
 
 The team over at [7daystodiemods.com](https://7daystodiemods.com) has put together [an excellent guide on how to install mods](https://7daystodiemods.com/how-to-install-7-days-to-die-mods/); just make sure to install this on your **server**, rather than your local game installation.
 
-After restarting your game, the High Ping Kicker will be active with default settings. You can join the server or access it via Telnet (if enabled) to adjust the configuration options to meet your needs (see below).
+After restarting your game, Lag Shield will be active with default settings. You can join the server or access it via Telnet (if enabled) to adjust the configuration options to meet your needs (see below).
 
 ### Commands
 
 Command | Description
 --- | ---
-`highpingkicker` / `hpk` | View current configuration
-`hpk set <Option> <Value>` | Update a key/value pair in the configuration
-`hpk list` | Show list of players currently being tracked for high ping
-`hpk reset` | Delete the configuration file and create a new one with default values
+`lagshield` / `ls` | View current configuration
+`ls set <Option> <Value>` | Update a key/value pair in the configuration
+`ls list` | Show list of players currently being tracked for high ping
+`ls reset` | Delete the configuration file and create a new one with default values
 
 ### Options
 
@@ -75,19 +75,19 @@ graph TD
 
 ### Kicked
 
-![kicked](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/kicked.jpg)
+![kicked](https://github.com/jonathan-robertson/lag-shield/raw/media/kicked.jpg)
 
 ### Banned
 
 Note: *ban timeout can be customized*
 
-![kicked due to ban](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/banned-kicked.jpg)
+![kicked due to ban](https://github.com/jonathan-robertson/lag-shield/raw/media/banned-kicked.jpg)
 
 ### Ban Reminder
 
 Note: *ban timeout can be customized*
 
-![banned reminder](https://github.com/jonathan-robertson/high-ping-kicker/raw/media/banned-reminder.jpg)
+![banned reminder](https://github.com/jonathan-robertson/lag-shield/raw/media/banned-reminder.jpg)
 
 ## Development
 
@@ -101,15 +101,15 @@ This project has a github action configured to automatically package and create 
    1. provide the subject/title (this will become the release's name)
    2. enter the details (this will become the release summary)
 3. when your PR is updated and merged, a release will automatically be created with the details you provided above
-   1. check out the release entry and copy the link for `high-ping-kicker.zip` from there if you want to download it on your server
+   1. check out the release entry and copy the link for `lag-shield.zip` from there if you want to download it on your server
 
 ## Special Thanks
 
-This mod is largely based on the feature by the same name in [Server Tools](https://github.com/dmustanger/7dtd-ServerTools). I would highly encourage anyone interested in *this* mod to check out their server management mod as well. It comes with a full suite of AntiCheat services and a truly wild number of tools and capabilities.
+This mod is largely based on the feature named "High Ping Kicker" in [Server Tools](https://github.com/dmustanger/7dtd-ServerTools). I would highly encourage anyone interested in *this* mod to check out their server management mod as well. It comes with a full suite of AntiCheat services and a truly wild number of tools and capabilities.
 
 ### Why not just use Server Tools?
 
 Hey, using [Server Tools](https://github.com/dmustanger/7dtd-ServerTools) might be the better choice for you! But here are some reasons why you might not have the option to:
 
-1. Accessibility: I found that my current host and many other hosts (it turns out) do not support the creation/management of xml files in the game root directory and instead rely on configuration via admin commands. In order to ensure accessibility and ease of use for all admins in any situation, **High Ping Kicker (this project) is fully configurable from the admin console or via Telnet**.
+1. Accessibility: I found that my current host and many other hosts (it turns out) do not support the creation/management of xml files in the game root directory and instead rely on configuration via admin commands. In order to ensure accessibility and ease of use for all admins in any situation, **Lag Shield is fully configurable from the admin console or via Telnet**.
 2. Compartmentalization: I'm a fan of keeping mods as small and as simple as possible, which aligns more to a 'microservices' line of thinking. There are some downsides to this, in certain situations, but monitoring/kicking players for excessive ping would not suffer from this approach in my view.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HighPingKicker {
+namespace LagShield {
     internal class ModLog {
         private readonly string className;
 
