@@ -39,7 +39,7 @@ namespace LagShield {
             if (ping <= Config.MaxPingAllowed) {
                 if (Violations.TryGetValue(key, out var recoveringViolation)) {
                     recoveringViolation.LagFailures--;
-                    if (recoveringViolation.LagFailures == 0) {
+                    if (recoveringViolation.LagFailures <= 0) {
                         Violations.Remove(key);
                     }
                     log.Info($"Successful ping for {ClientToId(clientInfo)}({clientInfo.playerName}): {ping}ms <= {Config.MaxPingAllowed}ms. Ping failure budget recovering: {recoveringViolation.LagFailures}/{Config.FailureThresholdBeforeKick}.");
