@@ -63,4 +63,8 @@
     <Compile Include="Violation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(ConfigurationName) == Debug (copy $(SolutionDir)\ModInfo.xml $(TargetDir))
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
