@@ -7,6 +7,8 @@ using System.Linq;
 namespace LagShield {
     internal class Service {
         private static readonly ModLog log = new ModLog(typeof(Service));
+
+        public static bool Loaded { get; private set; } = false;
         public static string Path { get; private set; } = System.IO.Path.Combine(GameIO.GetSaveGameDir(), "lag-shield.json");
 
         public Configuration Config { get; private set; }
@@ -23,7 +25,7 @@ namespace LagShield {
 
         public static void CheckLag(ClientInfo clientInfo, PlayerDataFile _) {
             try {
-                if (Instance != null) {
+                if (Loaded && Instance != null) {
                     Instance.CheckPing(clientInfo);
                 }
             } catch (Exception) {
@@ -104,19 +106,19 @@ namespace LagShield {
             return clientInfo.PlatformId.ReadablePlatformUserIdentifier;
         }
 
-        public static bool Load() {
+        public static void Load() {
             try {
                 var config = JsonUtil.Deserialize<Configuration>(File.ReadAllText(Path));
                 log.Info($"Successfully loaded config from {Path}.");
                 instance = new Service(config);
-                return true;
+                Loaded = true;
             } catch (FileNotFoundException) {
                 log.Warn($"File not found at {Path}; creating a new one with default configs.");
                 instance = new Service(null);
-                return true;
+                Loaded = true;
             } catch (Exception e) {
                 log.Error($"Could not load file at {Path}; use console command 'hpk reset' to reset this file to defaults if you're unable to access/edit it directly.", e);
-                return false;
+                Loaded = false;
             }
         }
         public static void Reset(SdtdConsole console) {
